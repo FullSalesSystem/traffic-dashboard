@@ -7,6 +7,8 @@ import {
   CreativeSummary,
   KPIData,
   FunnelData,
+  OrderBumpData,
+  ProductData,
 } from '@/types/campaign';
 
 // Planilha Meta Ads
@@ -545,4 +547,53 @@ export function getUniqueCampaigns(meta: CampaignData[]): string[] {
 
 export function getUniqueCreatives(meta: CampaignData[]): string[] {
   return [...new Set(meta.map(r => r.adName))].filter(Boolean).sort();
+}
+
+// ============================================
+// ORDER BUMP & PRODUCTS
+// ============================================
+
+const MAIN_PRODUCT = 'Master Sales Script';
+const ORDER_BUMP_PRODUCT = 'Kit de Gestão Comercial';
+
+export function calculateOrderBumpData(ticto: SaleData[]): OrderBumpData {
+  // Agrupar por produto
+  const mainProductSales = ticto.filter(s => s.produto === MAIN_PRODUCT);
+  const orderBumpSales = ticto.filter(s => s.produto === ORDER_BUMP_PRODUCT);
+
+  const mainQuantity = mainProductSales.length;
+  const mainRevenue = mainProductSales.reduce((sum, s) => sum + s.valor, 0);
+
+  const bumpQuantity = orderBumpSales.length;
+  const bumpRevenue = orderBumpSales.reduce((sum, s) => sum + s.valor, 0);
+
+  const totalRevenue = mainRevenue + bumpRevenue;
+
+  // Taxa de conversão do Order Bump = Compradores do Kit / Compradores do Master
+  const orderBumpConversionRate = mainQuantity > 0 ? (bumpQuantity / mainQuantity) * 100 : 0;
+
+  const mainProduct: ProductData = {
+    name: MAIN_PRODUCT,
+    quantity: mainQuantity,
+    revenue: mainRevenue,
+    avgPrice: mainQuantity > 0 ? mainRevenue / mainQuantity : 0,
+    conversionRate: 100, // 100% pois é o produto principal
+  };
+
+  const orderBump: ProductData = {
+    name: ORDER_BUMP_PRODUCT,
+    quantity: bumpQuantity,
+    revenue: bumpRevenue,
+    avgPrice: bumpQuantity > 0 ? bumpRevenue / bumpQuantity : 0,
+    conversionRate: orderBumpConversionRate,
+  };
+
+  return {
+    mainProduct,           // Ticto: Produto = "Master Sales Script"
+    orderBump,             // Ticto: Produto = "Kit de Gestão Comercial"
+    orderBumpConversionRate, // Compradores Kit / Compradores Master * 100
+    totalRevenue,          // SUM(Valor) de todos os produtos
+    orderBumpRevenue: bumpRevenue,
+    orderBumpRevenuePercent: totalRevenue > 0 ? (bumpRevenue / totalRevenue) * 100 : 0,
+  };
 }

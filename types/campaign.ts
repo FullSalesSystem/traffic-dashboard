@@ -161,3 +161,21 @@ export interface FunnelData {
   cpc: number;
   costPerPurchase: number;
 }
+
+// Dados de produtos e Order Bump
+export interface ProductData {
+  name: string;
+  quantity: number;
+  revenue: number;
+  avgPrice: number;
+  conversionRate: number;        // % do total de compradores
+}
+
+export interface OrderBumpData {
+  mainProduct: ProductData;      // Master Sales Script
+  orderBump: ProductData;        // Kit de Gestão Comercial
+  orderBumpConversionRate: number; // Compradores Kit / Compradores Master
+  totalRevenue: number;
+  orderBumpRevenue: number;
+  orderBumpRevenuePercent: number; // % da receita que veio do Order Bump
+}

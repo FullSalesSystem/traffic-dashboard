@@ -11,11 +11,13 @@ import {
   CampaignSummary,
   AdSetSummary,
   CreativeSummary,
+  OrderBumpData,
 } from '@/types/campaign';
 import {
   fetchAllData,
   calculateKPIs,
   calculateFunnel,
+  calculateOrderBumpData,
   getDailyMetrics,
   getCampaignSummaries,
   getAdSetSummaries,
@@ -29,6 +31,7 @@ import {
 import { formatCurrency, formatPercent } from '@/lib/utils';
 import { MiniCard } from '@/components/MiniCard';
 import { Funnel } from '@/components/Funnel';
+import { OrderBump } from '@/components/OrderBump';
 import { PurchasesCostChart, SpentScatterChart, SpentDonutChart, SalesDonutChart } from '@/components/Charts';
 import { CampaignTable, AdSetTable, CreativeTable } from '@/components/DataTable';
 import { DateFilter } from '@/components/DateFilter';
@@ -50,6 +53,7 @@ export default function Dashboard() {
   const [campaignSummaries, setCampaignSummaries] = useState<CampaignSummary[]>([]);
   const [adSetSummaries, setAdSetSummaries] = useState<AdSetSummary[]>([]);
   const [creativeSummaries, setCreativeSummaries] = useState<CreativeSummary[]>([]);
+  const [orderBumpData, setOrderBumpData] = useState<OrderBumpData | null>(null);
 
   // UI state
   const [loading, setLoading] = useState(true);
@@ -138,6 +142,7 @@ export default function Dashboard() {
     setCampaignSummaries(getCampaignSummaries(meta, ticto));
     setAdSetSummaries(getAdSetSummaries(meta, ticto));
     setCreativeSummaries(getCreativeSummaries(meta, ticto));
+    setOrderBumpData(calculateOrderBumpData(ticto));
   }, [rawMeta, rawTicto, startDate, endDate, selectedCampaign, selectedCreative]);
 
   const handlePresetChange = (days: number) => {
@@ -326,6 +331,9 @@ export default function Dashboard() {
 
         {/* Funnel */}
         {funnel && <Funnel data={funnel} />}
+
+        {/* Order Bump - Conversão por Produto */}
+        {orderBumpData && <OrderBump data={orderBumpData} />}
 
         {/* Campaign Table */}
         <CampaignTable data={campaignSummaries} />

@@ -9,134 +9,89 @@ interface FunnelProps {
 
 export function Funnel({ data }: FunnelProps) {
   const steps = [
-    {
-      label: 'Impressões',
-      value: data.impressions,
-      rate: null,
-      rateLabel: null,
-      cost: data.cpm,
-      costLabel: 'CPM',
-    },
-    {
-      label: 'Cliques',
-      value: data.clicks,
-      rate: data.ctr,
-      rateLabel: 'CTR',
-      cost: data.cpc,
-      costLabel: 'CPC',
-    },
-    {
-      label: 'Pág.Vendas',
-      value: data.landingPageViews,
-      rate: data.loadRate,
-      rateLabel: 'Tx. carreg.',
-      cost: null,
-      costLabel: null,
-    },
-    {
-      label: 'Checkout',
-      value: data.checkouts,
-      rate: data.checkoutRate,
-      rateLabel: 'Tx. checkout',
-      cost: null,
-      costLabel: null,
-    },
-    {
-      label: 'Compras',
-      value: data.purchases,
-      rate: data.conversionRate,
-      rateLabel: 'Tx. conv.',
-      cost: data.costPerPurchase,
-      costLabel: 'Custo/compra',
-    },
+    { label: 'Impressões', value: data.impressions, color: 'bg-blue-500' },
+    { label: 'Cliques', value: data.clicks, color: 'bg-blue-400' },
+    { label: 'Carregamentos', value: data.landingPageViews, color: 'bg-cyan-500' },
+    { label: 'Checkouts', value: data.checkouts, color: 'bg-teal-500' },
+    { label: 'Compras', value: data.purchases, color: 'bg-green-500' },
   ];
+
+  const rates = [
+    { label: 'CTR', value: data.ctr },
+    { label: 'Tx. Carreg.', value: data.loadRate },
+    { label: 'Tx. Checkout', value: data.checkoutRate },
+    { label: 'Tx. Conv.', value: data.conversionRate },
+  ];
+
+  const maxValue = steps[0].value || 1;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4 lg:hidden">Funil de Conversão</h3>
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        Funil de Conversão
+      </h3>
 
-      {/* Mobile: Vertical layout */}
-      <div className="flex flex-col gap-2 lg:hidden">
-        {steps.map((step, index) => (
-          <div key={step.label} className="flex items-center gap-2">
-            {/* Step box */}
-            <div className="bg-blue-500 dark:bg-blue-600 rounded-lg px-3 py-2 min-w-[100px] text-center flex-shrink-0">
-              <span className="text-[10px] text-blue-100 block">{step.label}</span>
-              <span className="text-base font-bold text-white">{formatCompactNumber(step.value)}</span>
-            </div>
+      {/* Funil Visual */}
+      <div className="space-y-2">
+        {steps.map((step, index) => {
+          const widthPercent = maxValue > 0 ? (step.value / maxValue) * 100 : 0;
+          const minWidth = 20; // Largura mínima para visualização
+          const displayWidth = Math.max(widthPercent, minWidth);
 
-            {/* Rate & Cost */}
-            <div className="flex-1 flex items-center justify-between text-xs">
-              {index > 0 && step.rate !== null && (
-                <div className="text-gray-600 dark:text-gray-400">
-                  <span className="text-gray-400 dark:text-gray-500">{step.rateLabel}: </span>
-                  <span className="font-medium">{formatPercent(step.rate)}</span>
-                </div>
-              )}
-              {step.costLabel && (
-                <div className="text-gray-600 dark:text-gray-400 text-right">
-                  <span className="text-gray-400 dark:text-gray-500">{step.costLabel}: </span>
-                  <span className="font-medium">{formatCurrency(step.cost || 0)}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Desktop: Horizontal layout */}
-      <div className="hidden lg:flex items-center justify-between overflow-x-auto">
-        {steps.map((step, index) => (
-          <div key={step.label} className="flex items-center">
-            {/* Rate between steps */}
-            {index > 0 && (
-              <div className="flex flex-col items-center mx-2 min-w-[80px]">
-                <span className="text-[10px] text-gray-400 dark:text-gray-500 text-center whitespace-nowrap">
-                  {step.rateLabel}
+          return (
+            <div key={step.label} className="relative">
+              {/* Barra do funil */}
+              <div
+                className={`${step.color} rounded-lg py-3 px-4 mx-auto transition-all duration-500 flex items-center justify-between`}
+                style={{
+                  width: `${displayWidth}%`,
+                  minWidth: '200px',
+                }}
+              >
+                <span className="text-white text-xs sm:text-sm font-medium truncate">
+                  {step.label}
                 </span>
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  {formatPercent(step.rate || 0)}
-                </span>
-                <div className="w-8 h-0.5 bg-gray-300 dark:bg-gray-600 my-1" />
-              </div>
-            )}
-
-            {/* Step box */}
-            <div className="flex flex-col items-center">
-              {/* Cost above (for CPM, CPC) */}
-              {step.costLabel && index < 2 && (
-                <div className="mb-1 text-center">
-                  <span className="text-[10px] text-gray-400 dark:text-gray-500 block">
-                    {step.costLabel}
-                  </span>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                    {formatCurrency(step.cost || 0)}
-                  </span>
-                </div>
-              )}
-
-              {/* Main box */}
-              <div className="bg-blue-500 dark:bg-blue-600 rounded-lg px-4 py-3 min-w-[100px] text-center">
-                <span className="text-[10px] text-blue-100 block">{step.label}</span>
-                <span className="text-lg font-bold text-white">
+                <span className="text-white text-sm sm:text-base font-bold">
                   {formatCompactNumber(step.value)}
                 </span>
               </div>
 
-              {/* Cost below (for Custo por compra) */}
-              {step.costLabel && index >= 2 && (
-                <div className="mt-1 text-center">
-                  <span className="text-[10px] text-gray-400 dark:text-gray-500 block">
-                    {step.costLabel}
-                  </span>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                    {formatCurrency(step.cost || 0)}
-                  </span>
+              {/* Taxa de conversão entre etapas */}
+              {index < rates.length && (
+                <div className="absolute -right-2 sm:right-4 top-1/2 transform -translate-y-1/2 translate-x-full">
+                  <div className="bg-gray-100 dark:bg-gray-700 rounded-full px-2 py-1 text-[10px] sm:text-xs">
+                    <span className="text-gray-500 dark:text-gray-400">{rates[index].label}: </span>
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">
+                      {formatPercent(rates[index].value)}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
-          </div>
-        ))}
+          );
+        })}
+      </div>
+
+      {/* Métricas de custo */}
+      <div className="grid grid-cols-3 gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">CPM</p>
+          <p className="text-sm sm:text-lg font-bold text-gray-900 dark:text-white">
+            {formatCurrency(data.cpm)}
+          </p>
+        </div>
+        <div className="text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">CPC</p>
+          <p className="text-sm sm:text-lg font-bold text-gray-900 dark:text-white">
+            {formatCurrency(data.cpc)}
+          </p>
+        </div>
+        <div className="text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Custo/Compra</p>
+          <p className="text-sm sm:text-lg font-bold text-gray-900 dark:text-white">
+            {formatCurrency(data.costPerPurchase)}
+          </p>
+        </div>
       </div>
     </div>
   );
