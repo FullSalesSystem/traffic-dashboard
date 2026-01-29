@@ -14,6 +14,7 @@ import {
   ComposedChart,
   ScatterChart,
   Scatter,
+  Legend,
 } from 'recharts';
 import { useTheme } from 'next-themes';
 import { DailyMetrics, CampaignSummary } from '@/types/campaign';
