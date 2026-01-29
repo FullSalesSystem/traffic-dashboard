@@ -213,52 +213,16 @@ export default function Dashboard() {
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Resumo das métricas */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resumo das métricas</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Resumo das métricas</h2>
 
-          <div className="flex flex-wrap gap-4 items-start justify-between">
-            {/* KPI Cards */}
-            {kpis && (
-              <div className="flex flex-wrap gap-4">
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 min-w-[140px]">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Compras</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{kpis.totalPurchases}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Ticto: COUNT(K{'>'} 0)</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 min-w-[140px]">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Custo por Compra</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(kpis.costPerPurchase)}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Meta(E) / Ticto(COUNT)</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 min-w-[140px]">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">ROAS</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{kpis.roas.toFixed(2)}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Ticto(K) / Meta(E)</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 min-w-[140px]">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Valor Investido</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(kpis.totalSpent)}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Meta: SUM(E)</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 min-w-[140px]">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Valor Retornado</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(kpis.totalRevenue)}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Ticto: SUM(K)</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 min-w-[140px]">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Ticket Médio</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(kpis.avgTicket)}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Ticto: SUM(K) / COUNT</p>
-                </div>
-              </div>
-            )}
-
-            {/* Filters */}
-            <div className="flex flex-col gap-2 min-w-[200px]">
+            {/* Filters - Mobile: full width, Desktop: inline */}
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <select
                 value={selectedCampaign}
                 onChange={(e) => setSelectedCampaign(e.target.value)}
-                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-full sm:w-48"
               >
                 <option value="">Filtro de Campanha</option>
                 {campaigns.map((c) => (
@@ -268,7 +232,7 @@ export default function Dashboard() {
               <select
                 value={selectedCreative}
                 onChange={(e) => setSelectedCreative(e.target.value)}
-                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-full sm:w-48"
               >
                 <option value="">Filtro de Criativos</option>
                 {creatives.map((c) => (
@@ -277,6 +241,36 @@ export default function Dashboard() {
               </select>
             </div>
           </div>
+
+          {/* KPI Cards - Grid responsivo */}
+          {kpis && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 sm:p-4">
+                <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">Compras</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{kpis.totalPurchases}</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 sm:p-4">
+                <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">Custo/Compra</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(kpis.costPerPurchase)}</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 sm:p-4">
+                <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">ROAS</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{kpis.roas.toFixed(2)}</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 sm:p-4">
+                <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">Investido</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(kpis.totalSpent)}</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 sm:p-4">
+                <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">Retornado</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(kpis.totalRevenue)}</p>
+              </div>
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 sm:p-4">
+                <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">Ticket Médio</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(kpis.avgTicket)}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Date Filter */}
@@ -296,15 +290,15 @@ export default function Dashboard() {
 
         {/* Mini Cards Row */}
         {kpis && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <MiniCard
-              title="Taxa de Carregamento"
+              title="Tx. Carregamento"
               value={formatPercent(kpis.loadRate)}
               data={dailyMetrics.map(d => ({ value: d.loadRate }))}
               color="#3b82f6"
             />
             <MiniCard
-              title="Custo por clique"
+              title="CPC"
               value={formatCurrency(kpis.avgCPC)}
               data={dailyMetrics.map(d => ({ value: d.avgCPC }))}
               color="#8b5cf6"

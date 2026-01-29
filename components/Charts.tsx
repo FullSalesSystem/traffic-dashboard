@@ -1,19 +1,16 @@
 'use client';
 
 import {
-  LineChart as RechartsLineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart as RechartsBarChart,
   Bar,
   PieChart as RechartsPieChart,
   Pie,
   Cell,
-  Legend,
   ComposedChart,
   ScatterChart,
   Scatter,
@@ -45,9 +42,9 @@ export function PurchasesCostChart({ data, title }: DailyChartProps) {
   }));
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{title}</h3>
-      <ResponsiveContainer width="100%" height={300}>
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">{title}</h3>
+      <ResponsiveContainer width="100%" height={250} className="sm:!h-[300px]">
         <ComposedChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} />
           <XAxis dataKey="date" stroke={isDark ? '#9ca3af' : '#6b7280'} fontSize={11} />
@@ -96,7 +93,7 @@ export function SpentScatterChart({ data, title }: DailyChartProps) {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const chartData = data.map(d => ({
+  const scatterData = data.map(d => ({
     date: d.date.substring(5),
     valor: d.totalSpent,
   }));
@@ -104,17 +101,15 @@ export function SpentScatterChart({ data, title }: DailyChartProps) {
   const totalSpent = data.reduce((sum, d) => sum + d.totalSpent, 0);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="flex justify-between items-start mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
-        <div className="text-right">
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {formatCurrency(totalSpent)}
-          </p>
-        </div>
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-4">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
+        <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+          {formatCurrency(totalSpent)}
+        </p>
       </div>
-      <ResponsiveContainer width="100%" height={250}>
-        <ScatterChart>
+      <ResponsiveContainer width="100%" height={200} className="sm:!h-[250px]">
+        <ScatterChart data={scatterData}>
           <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} />
           <XAxis dataKey="date" stroke={isDark ? '#9ca3af' : '#6b7280'} fontSize={10} />
           <YAxis stroke={isDark ? '#9ca3af' : '#6b7280'} fontSize={10} tickFormatter={(v) => formatCompactNumber(v)} />
@@ -157,11 +152,11 @@ export function SpentDonutChart({ data, title }: CampaignChartProps) {
   const total = chartData.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{title}</h3>
-      <div className="flex">
-        <div className="w-1/2">
-          <ResponsiveContainer width="100%" height={280}>
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">{title}</h3>
+      <div className="flex flex-col sm:flex-row">
+        <div className="w-full sm:w-1/2">
+          <ResponsiveContainer width="100%" height={220} className="sm:!h-[280px]">
             <RechartsPieChart>
               <Pie
                 data={chartData}
@@ -189,7 +184,7 @@ export function SpentDonutChart({ data, title }: CampaignChartProps) {
             </RechartsPieChart>
           </ResponsiveContainer>
         </div>
-        <div className="w-1/2 pl-4 overflow-y-auto max-h-[280px]">
+        <div className="w-full sm:w-1/2 sm:pl-4 mt-4 sm:mt-0 overflow-y-auto max-h-[150px] sm:max-h-[280px]">
           {chartData.map((item, index) => (
             <div key={item.name} className="flex items-center gap-2 py-1 text-xs">
               <div
@@ -230,11 +225,11 @@ export function SalesDonutChart({ data, title }: CampaignChartProps) {
   const total = chartData.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">{title}</h3>
-      <div className="flex">
-        <div className="w-1/2">
-          <ResponsiveContainer width="100%" height={280}>
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">{title}</h3>
+      <div className="flex flex-col sm:flex-row">
+        <div className="w-full sm:w-1/2">
+          <ResponsiveContainer width="100%" height={220} className="sm:!h-[280px]">
             <RechartsPieChart>
               <Pie
                 data={chartData}
@@ -262,7 +257,7 @@ export function SalesDonutChart({ data, title }: CampaignChartProps) {
             </RechartsPieChart>
           </ResponsiveContainer>
         </div>
-        <div className="w-1/2 pl-4 overflow-y-auto max-h-[280px]">
+        <div className="w-full sm:w-1/2 sm:pl-4 mt-4 sm:mt-0 overflow-y-auto max-h-[150px] sm:max-h-[280px]">
           {chartData.map((item, index) => (
             <div key={item.name} className="flex items-center gap-2 py-1 text-xs">
               <div

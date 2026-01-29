@@ -29,7 +29,7 @@ export function Funnel({ data }: FunnelProps) {
       label: 'Pág.Vendas',
       value: data.landingPageViews,
       rate: data.loadRate,
-      rateLabel: 'Tx. de carregamento',
+      rateLabel: 'Tx. carreg.',
       cost: null,
       costLabel: null,
     },
@@ -37,7 +37,7 @@ export function Funnel({ data }: FunnelProps) {
       label: 'Checkout',
       value: data.checkouts,
       rate: data.checkoutRate,
-      rateLabel: 'Tx. de checkout',
+      rateLabel: 'Tx. checkout',
       cost: null,
       costLabel: null,
     },
@@ -45,15 +45,47 @@ export function Funnel({ data }: FunnelProps) {
       label: 'Compras',
       value: data.purchases,
       rate: data.conversionRate,
-      rateLabel: 'Tx. conversão checkout / compra',
+      rateLabel: 'Tx. conv.',
       cost: data.costPerPurchase,
-      costLabel: 'Custo por compra',
+      costLabel: 'Custo/compra',
     },
   ];
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center justify-between overflow-x-auto">
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4 lg:hidden">Funil de Conversão</h3>
+
+      {/* Mobile: Vertical layout */}
+      <div className="flex flex-col gap-2 lg:hidden">
+        {steps.map((step, index) => (
+          <div key={step.label} className="flex items-center gap-2">
+            {/* Step box */}
+            <div className="bg-blue-500 dark:bg-blue-600 rounded-lg px-3 py-2 min-w-[100px] text-center flex-shrink-0">
+              <span className="text-[10px] text-blue-100 block">{step.label}</span>
+              <span className="text-base font-bold text-white">{formatCompactNumber(step.value)}</span>
+            </div>
+
+            {/* Rate & Cost */}
+            <div className="flex-1 flex items-center justify-between text-xs">
+              {index > 0 && step.rate !== null && (
+                <div className="text-gray-600 dark:text-gray-400">
+                  <span className="text-gray-400 dark:text-gray-500">{step.rateLabel}: </span>
+                  <span className="font-medium">{formatPercent(step.rate)}</span>
+                </div>
+              )}
+              {step.costLabel && (
+                <div className="text-gray-600 dark:text-gray-400 text-right">
+                  <span className="text-gray-400 dark:text-gray-500">{step.costLabel}: </span>
+                  <span className="font-medium">{formatCurrency(step.cost || 0)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: Horizontal layout */}
+      <div className="hidden lg:flex items-center justify-between overflow-x-auto">
         {steps.map((step, index) => (
           <div key={step.label} className="flex items-center">
             {/* Rate between steps */}
