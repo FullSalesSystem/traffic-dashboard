@@ -199,11 +199,11 @@ export function Suggestions({ kpis, funnel }: SuggestionsProps) {
                 {suggestion.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
                   <h4 className="font-semibold text-sm text-gray-900 dark:text-white">
                     {suggestion.title}
                   </h4>
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 w-fit">
                     {suggestion.metric}
                   </span>
                 </div>
