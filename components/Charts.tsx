@@ -89,12 +89,12 @@ export function PurchasesCostChart({ data, title }: DailyChartProps) {
   );
 }
 
-// Gráfico de Valor Investido por dia (scatter)
+// Gráfico de Valor Investido por dia (bar chart)
 export function SpentScatterChart({ data, title }: DailyChartProps) {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const scatterData = data.map(d => ({
+  const chartData = data.map(d => ({
     date: d.date.substring(5),
     valor: d.totalSpent,
   }));
@@ -110,7 +110,7 @@ export function SpentScatterChart({ data, title }: DailyChartProps) {
         </p>
       </div>
       <ResponsiveContainer width="100%" height={200} className="sm:!h-[250px]">
-        <ScatterChart data={scatterData}>
+        <ComposedChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} />
           <XAxis dataKey="date" stroke={isDark ? '#9ca3af' : '#6b7280'} fontSize={10} />
           <YAxis stroke={isDark ? '#9ca3af' : '#6b7280'} fontSize={10} tickFormatter={(v) => formatCompactNumber(v)} />
@@ -122,8 +122,8 @@ export function SpentScatterChart({ data, title }: DailyChartProps) {
             }}
             formatter={(value: number) => [formatCurrency(value), 'Valor']}
           />
-          <Scatter dataKey="valor" fill="#ef4444" />
-        </ScatterChart>
+          <Bar dataKey="valor" fill="#ef4444" radius={[4, 4, 0, 0]} />
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   );

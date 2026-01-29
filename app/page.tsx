@@ -32,6 +32,7 @@ import { formatCurrency, formatPercent } from '@/lib/utils';
 import { MiniCard } from '@/components/MiniCard';
 import { Funnel } from '@/components/Funnel';
 import { OrderBump } from '@/components/OrderBump';
+import { Suggestions } from '@/components/Suggestions';
 import { PurchasesCostChart, SpentScatterChart, SpentDonutChart, SalesDonutChart } from '@/components/Charts';
 import { CampaignTable, AdSetTable, CreativeTable } from '@/components/DataTable';
 import { DateFilter } from '@/components/DateFilter';
@@ -334,6 +335,9 @@ export default function Dashboard() {
 
         {/* Order Bump - Conversão por Produto */}
         {orderBumpData && <OrderBump data={orderBumpData} />}
+
+        {/* Sugestões de Otimização */}
+        {kpis && funnel && <Suggestions kpis={kpis} funnel={funnel} />}
 
         {/* Campaign Table */}
         <CampaignTable data={campaignSummaries} />
