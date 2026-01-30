@@ -25,8 +25,10 @@ import {
   filterByDateRange,
   filterByCampaign,
   filterByCreative,
+  filterByAdSet,
   getUniqueCampaigns,
   getUniqueCreatives,
+  getUniqueAdSets,
 } from '@/lib/sheets';
 import { formatCurrency, formatPercent } from '@/lib/utils';
 import { MiniCard } from '@/components/MiniCard';
@@ -67,8 +69,10 @@ export default function Dashboard() {
   const [endDate, setEndDate] = useState('');
   const [selectedCampaign, setSelectedCampaign] = useState('');
   const [selectedCreative, setSelectedCreative] = useState('');
+  const [selectedAdSet, setSelectedAdSet] = useState('');
   const [campaigns, setCampaigns] = useState<string[]>([]);
   const [creatives, setCreatives] = useState<string[]>([]);
+  const [adSets, setAdSets] = useState<string[]>([]);
 
   const loadData = useCallback(async () => {
     try {
@@ -89,6 +93,7 @@ export default function Dashboard() {
       // Set filter options
       setCampaigns(getUniqueCampaigns(meta));
       setCreatives(getUniqueCreatives(meta));
+      setAdSets(getUniqueAdSets(meta));
     } catch (err) {
       setError('Erro ao carregar dados. Verifique se as planilhas estão públicas.');
       console.error(err);
@@ -133,6 +138,13 @@ export default function Dashboard() {
       ticto = filtered.ticto;
     }
 
+    // Filter by ad set (público)
+    if (selectedAdSet) {
+      const filtered = filterByAdSet(meta, ticto, selectedAdSet);
+      meta = filtered.meta;
+      ticto = filtered.ticto;
+    }
+
     setFilteredMeta(meta);
     setFilteredTicto(ticto);
 
@@ -144,7 +156,7 @@ export default function Dashboard() {
     setAdSetSummaries(getAdSetSummaries(meta, ticto));
     setCreativeSummaries(getCreativeSummaries(meta, ticto));
     setOrderBumpData(calculateOrderBumpData(ticto));
-  }, [rawMeta, rawTicto, startDate, endDate, selectedCampaign, selectedCreative]);
+  }, [rawMeta, rawTicto, startDate, endDate, selectedCampaign, selectedCreative, selectedAdSet]);
 
   const handlePresetChange = (days: number) => {
     const end = new Date();
@@ -152,6 +164,11 @@ export default function Dashboard() {
     start.setDate(start.getDate() - days);
     setStartDate(start.toISOString().split('T')[0]);
     setEndDate(end.toISOString().split('T')[0]);
+  };
+
+  const handleCustomRange = (start: string, end: string) => {
+    setStartDate(start);
+    setEndDate(end);
   };
 
   if (loading) {
@@ -236,6 +253,16 @@ export default function Dashboard() {
                 ))}
               </select>
               <select
+                value={selectedAdSet}
+                onChange={(e) => setSelectedAdSet(e.target.value)}
+                className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-full sm:w-48"
+              >
+                <option value="">Filtro de Público</option>
+                {adSets.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+              <select
                 value={selectedCreative}
                 onChange={(e) => setSelectedCreative(e.target.value)}
                 className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white w-full sm:w-48"
@@ -286,6 +313,7 @@ export default function Dashboard() {
           onStartDateChange={setStartDate}
           onEndDateChange={setEndDate}
           onPresetChange={handlePresetChange}
+          onCustomRange={handleCustomRange}
         />
 
         {/* Charts Row: Métricas por dia + Valor Investido */}
@@ -298,7 +326,7 @@ export default function Dashboard() {
         {kpis && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <MiniCard
-              title="Tx. Carregamento"
+              title="Connect Rate"
               value={formatPercent(kpis.loadRate)}
               data={dailyMetrics.map(d => ({ value: d.loadRate }))}
               color="#3b82f6"

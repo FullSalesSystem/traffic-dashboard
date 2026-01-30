@@ -18,7 +18,7 @@ export function Funnel({ data }: FunnelProps) {
 
   const rates = [
     { label: 'CTR', value: data.ctr },
-    { label: 'Tx. Carreg.', value: data.loadRate },
+    { label: 'Connect Rate', value: data.loadRate },
     { label: 'Tx. Checkout', value: data.checkoutRate },
     { label: 'Tx. Conv.', value: data.conversionRate },
   ];

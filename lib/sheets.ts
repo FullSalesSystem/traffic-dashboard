@@ -405,12 +405,22 @@ export function getAdSetSummaries(meta: CampaignData[], ticto: SaleData[]): AdSe
     metaByAdSet.get(name)!.push(row);
   });
 
-  // Agrupar Ticto por UTM Term (coluna I) - geralmente usado para público
+  // Mapear Ad Name → Ad Set Name (para correlacionar com UTM Content do Ticto)
+  const adNameToAdSet = new Map<string, string>();
+  meta.forEach(row => {
+    if (row.adName && row.adSetName) {
+      adNameToAdSet.set(row.adName, row.adSetName);
+    }
+  });
+
+  // Agrupar Ticto por Ad Set usando UTM Content (= Ad Name) como ponte
   const tictoByAdSet = new Map<string, SaleData[]>();
   ticto.forEach(row => {
-    const name = row.utmTerm;
-    if (!tictoByAdSet.has(name)) tictoByAdSet.set(name, []);
-    tictoByAdSet.get(name)!.push(row);
+    const adSetName = adNameToAdSet.get(row.utmContent);
+    if (adSetName) {
+      if (!tictoByAdSet.has(adSetName)) tictoByAdSet.set(adSetName, []);
+      tictoByAdSet.get(adSetName)!.push(row);
+    }
   });
 
   const summaries: AdSetSummary[] = [];
@@ -433,7 +443,7 @@ export function getAdSetSummaries(meta: CampaignData[], ticto: SaleData[]): AdSe
     summaries.push({
       name,
       totalSpent,              // Meta: SUM(E) por Ad Set
-      totalPurchases,          // Ticto: COUNT por UTM Term
+      totalPurchases,          // Ticto: COUNT por UTM Content → Ad Set
       costPerPurchase: totalPurchases > 0 ? totalSpent / totalPurchases : 0,
       stopRate,
       retentionRate,
@@ -547,6 +557,23 @@ export function getUniqueCampaigns(meta: CampaignData[]): string[] {
 
 export function getUniqueCreatives(meta: CampaignData[]): string[] {
   return [...new Set(meta.map(r => r.adName))].filter(Boolean).sort();
+}
+
+export function getUniqueAdSets(meta: CampaignData[]): string[] {
+  return [...new Set(meta.map(r => r.adSetName))].filter(Boolean).sort();
+}
+
+export function filterByAdSet(
+  meta: CampaignData[],
+  ticto: SaleData[],
+  adSetName: string
+): { meta: CampaignData[]; ticto: SaleData[] } {
+  if (!adSetName) return { meta, ticto };
+  const filteredMeta = meta.filter(row => row.adSetName === adSetName);
+  // Mapear Ad Names deste Ad Set para filtrar Ticto via UTM Content
+  const adNamesInSet = new Set(filteredMeta.map(r => r.adName).filter(Boolean));
+  const filteredTicto = ticto.filter(row => adNamesInSet.has(row.utmContent));
+  return { meta: filteredMeta, ticto: filteredTicto };
 }
 
 // ============================================
